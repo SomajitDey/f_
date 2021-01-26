@@ -50,7 +50,7 @@ use iso_fortran_env
 implicit none
 private
 public :: f_signal,f_alarm,f_chmod,f_getpid,f_rename,f_sleep,f_kill,f_unlink,f_symlink,f_link,f_getcwd,f_time,f_nanosleep, &
-f_gethostname,f_mkdir,f_rmdir,f_chdir
+f_gethostname,f_mkdir,f_rmdir,f_chdir,f_exit
 
 type, bind(c) :: timespec
    integer(c_long) :: tv_sec
@@ -360,4 +360,16 @@ character(len=len_trim(fname)+1) :: c_fname
 c_fname=trim(fname)//c_null_char
 iret=c_chdir(c_fname)
 end subroutine f_chdir
+
+subroutine f_exit(exitcode)
+integer :: exitcode
+interface
+    subroutine c_exit(exitcode) bind(c,name='exit')
+    import :: c_int
+    integer(c_int),value::exitcode
+    end subroutine c_exit
+end interface
+call c_exit(int(exitcode,kind=c_int))
+end subroutine f_exit
+
 end module syscall
