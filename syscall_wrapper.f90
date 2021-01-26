@@ -67,7 +67,7 @@ end interface
 contains
 
 subroutine f_signal(signum,handler)
-integer , intent(in) :: signum
+integer, intent(in) :: signum
 type(c_funptr) :: iret
 type(c_funptr) :: c_handler
 
@@ -75,14 +75,14 @@ interface
    subroutine handler(signum) bind(c)
    import :: c_int
    implicit none
-   integer(c_int) , intent(in) , value :: signum
+   integer(c_int), intent(in), value :: signum
    end subroutine handler
 
    function c_signal(signal, sighandler) bind(c,name='signal')
    import :: c_int,c_funptr 
    implicit none
-   integer(c_int) , value , intent(in) :: signal
-   type(c_funptr), value , intent(in) :: sighandler
+   integer(c_int), value, intent(in) :: signal
+   type(c_funptr), value, intent(in) :: sighandler
    type(c_funptr) :: c_signal
    end function c_signal
 end interface
@@ -91,36 +91,39 @@ c_handler=c_funloc(handler)
 iret=c_signal(signum,c_handler)
 end subroutine f_signal
 
-subroutine f_alarm(seconds,iret)
-integer , intent(in) :: seconds
-integer,  intent(out) :: iret
+subroutine f_alarm(seconds,remaining)
+integer, intent(in) :: seconds
+integer, intent(out), optional :: remaining
+integer :: iret
 
 interface
    function c_alarm(sec) bind(c,name='alarm') result(ret)
    import :: c_int
-   integer(c_int) , value :: sec
+   integer(c_int), value :: sec
    integer(c_int) :: ret
    end function c_alarm
 end interface
 
 iret=c_alarm(seconds)
+if(present(remaining))remaining=iret
 end subroutine f_alarm
 
-subroutine f_chmod(fname,mode,iret)
+subroutine f_chmod(fname,mode,exitstat)
 character(len=*), intent(in) :: fname,mode
-integer , intent(out) :: iret
+integer, intent(out), optional :: exitstat
+integer :: iret
 interface
    function c_chmod(fname,mode) bind(c,name='chmod') result(ret)
    import :: c_char,c_int,c_long 
-   character(c_char) , dimension(*) , intent(in) :: fname
-   integer(c_long) , value :: mode
+   character(c_char), dimension(*), intent(in) :: fname
+   integer(c_long), value :: mode
    integer(c_int) :: ret
    end function c_chmod
    
    function c_strtol(string,nullchar,base) bind(c,name='strtol') result(ret)
    import :: c_long,c_char,c_int
-   character(c_char) , dimension(*) :: string,nullchar
-   integer(c_int) , value :: base
+   character(c_char), dimension(*) :: string,nullchar
+   integer(c_int), value :: base
    integer(c_long) :: ret
    end function c_strtol
 end interface
@@ -134,15 +137,17 @@ c_string=trim(mode)//c_null_char
 c_mode=c_strtol(c_string,nullchar,8_c_int)
 c_fname=trim(fname)//c_null_char
 iret=c_chmod(c_fname,c_mode)
+if(present(exitstat))exitstat=iret
 end subroutine f_chmod
 
-subroutine f_rename(oldname,newname,iret)
-character(len=*) , intent(in) :: oldname,newname
-integer,  intent(out) :: iret
+subroutine f_rename(oldname,newname,exitstat)
+character(len=*), intent(in) :: oldname,newname
+integer, intent(out), optional :: exitstat
+integer :: iret
 interface
    function c_rename(oldf,newf) bind(c,name='rename') result(ret)
    import :: c_char,c_int 
-   character(c_char) , dimension(*) , intent(in) :: oldf,newf
+   character(c_char), dimension(*), intent(in) :: oldf,newf
    integer(c_int) :: ret
    end function c_rename
 end interface
@@ -152,43 +157,49 @@ character(len=len_trim(newname)+1) :: c_newname
 c_oldname=trim(oldname)//c_null_char
 c_newname=trim(newname)//c_null_char
 iret=c_rename(c_oldname,c_newname)
+if(present(exitstat))exitstat=iret
 end subroutine f_rename
 
-subroutine f_sleep(seconds,iret)
-integer , intent(in) :: seconds
-integer,  intent(out) :: iret
+subroutine f_sleep(seconds,remaining)
+integer, intent(in) :: seconds
+integer, intent(out), optional :: remaining
+integer :: iret
 interface
    function c_sleep(sec) bind(c,name='sleep') result(ret)
    import :: c_int
-   integer(c_int) , value :: sec
+   integer(c_int), value :: sec
    integer(c_int) :: ret
    end function c_sleep
 end interface   
 
 iret=c_sleep(seconds)
+if(present(remaining))remaining=iret
 end subroutine f_sleep
 
-subroutine f_kill(pid,signal,iret)
-integer , intent(in) :: pid,signal
-integer,  intent(out) :: iret
+subroutine f_kill(pid,signal,exitstat)
+integer, intent(in) :: pid,signal
+integer, intent(out), optional :: exitstat
+integer :: iret
 interface
    function c_kill(pid,sig) bind(c,name='kill') result(ret)
    import :: c_int
-   integer(c_int) , value :: pid,sig
+   integer(c_int), value :: pid,sig
    integer(c_int) :: ret
    end function c_kill
 end interface   
 
 iret=c_kill(pid,signal)
+if(present(exitstat))exitstat=iret
 end subroutine f_kill
 
-subroutine f_unlink(path,iret)
-character(len=*) , intent(in) :: path
-integer ,  intent(out) :: iret
+subroutine f_unlink(path,exitstat)
+character(len=*), intent(in) :: path
+integer, intent(out), optional :: exitstat
+integer :: iret
 interface
    function c_unlink(pathname) bind(c,name='unlink') result(ret)
    import :: c_char,c_int
-   character(c_char) , dimension(*) :: pathname
+   character(c_char), dimension(*) :: pathname
    integer(c_int) :: ret
    end function c_unlink
 end interface
@@ -196,15 +207,17 @@ character(len=len_trim(path)+1) :: c_path
 
 c_path=trim(path)//c_null_char
 iret=c_unlink(c_path)
+if(present(exitstat))exitstat=iret
 end subroutine f_unlink
 
-subroutine f_link(path,link,iret)
-character(len=*) , intent(in) :: path,link
-integer,  intent(out) :: iret
+subroutine f_link(path,link,exitstat)
+character(len=*), intent(in) :: path,link
+integer, intent(out), optional :: exitstat
+integer :: iret
 interface
    function c_link(path1,path2) bind(c,name='link') result(ret)
    import :: c_char,c_int 
-   character(c_char) , dimension(*) , intent(in) :: path1,path2
+   character(c_char), dimension(*), intent(in) :: path1,path2
    integer(c_int) :: ret
    end function c_link
 end interface
@@ -214,15 +227,17 @@ character(len=len_trim(link)+1) :: c_path2
 c_path1=trim(path)//c_null_char
 c_path2=trim(link)//c_null_char
 iret=c_link(c_path1,c_path2)
+if(present(exitstat))exitstat=iret
 end subroutine f_link
 
-subroutine f_symlink(path,link,iret)
-character(len=*) , intent(in) :: path,link
-integer,  intent(out) :: iret
+subroutine f_symlink(path,link,exitstat)
+character(len=*), intent(in) :: path,link
+integer, intent(out), optional :: exitstat
+integer :: iret
 interface
    function c_symlink(path1,path2) bind(c,name='symlink') result(ret)
    import :: c_char,c_int 
-   character(c_char) , dimension(*) , intent(in) :: path1,path2
+   character(c_char), dimension(*), intent(in) :: path1,path2
    integer(c_int) :: ret
    end function c_symlink
 end interface
@@ -232,6 +247,7 @@ character(len=len_trim(link)+1) :: c_path2
 c_path1=trim(path)//c_null_char
 c_path2=trim(link)//c_null_char
 iret=c_symlink(c_path1,c_path2)
+if(present(exitstat))exitstat=iret
 end subroutine f_symlink
 
 subroutine f_getcwd(str)
@@ -240,8 +256,8 @@ integer :: endChar
 interface
    subroutine c_getcwd(buff,n) bind(c,name='getcwd')
    import :: c_char,c_size_t
-   character(c_char) , intent(out) :: buff(*)
-   integer(c_size_t) , value, intent(in) :: n
+   character(c_char), intent(out) :: buff(*)
+   integer(c_size_t), value, intent(in) :: n
    end subroutine c_getcwd
 end interface
 
@@ -265,8 +281,8 @@ f_time=int(f_time_c_long,kind(f_time))
 end function f_time
 
 subroutine f_nanosleep(s,ns,rem_s,rem_ns)
-integer(int32) , intent(in) :: s,ns
-integer(int32) , intent(out) :: rem_s,rem_ns
+integer(int32), intent(in) :: s,ns
+integer(int32), intent(out) :: rem_s,rem_ns
 type(timespec) :: f_req,f_rem
 interface
    subroutine c_nanosleep(req,rem) bind(c,name='nanosleep')
@@ -288,8 +304,8 @@ integer :: endChar
 interface
    subroutine c_gethostname(buff,n) bind(c,name='gethostname')
    import :: c_char,c_size_t
-   character(c_char) , intent(out) :: buff(*)
-   integer(c_size_t) , value, intent(in) :: n
+   character(c_char), intent(out) :: buff(*)
+   integer(c_size_t), value, intent(in) :: n
    end subroutine c_gethostname
 end interface
 
@@ -299,21 +315,22 @@ endChar=len_trim(str)
 str(endChar:endChar)=' ' !Because C returns a null-terminated string, we remove c_null_char with a blank character
 end subroutine f_gethostname
 
-subroutine f_mkdir(fname,mode,iret)
+subroutine f_mkdir(fname,mode,exitstat)
 character(len=*), intent(in) :: fname,mode
-integer , intent(out) :: iret
+integer, intent(out), optional :: exitstat
+integer :: iret
 interface
    function c_mkdir(fname,mode) bind(c,name='mkdir') result(ret)
    import :: c_char,c_int,c_long 
-   character(c_char) , dimension(*) , intent(in) :: fname
-   integer(c_long) , value :: mode
+   character(c_char), dimension(*), intent(in) :: fname
+   integer(c_long), value :: mode
    integer(c_int) :: ret
    end function c_mkdir
    
    function c_strtol(string,nullchar,base) bind(c,name='strtol') result(ret)
    import :: c_long,c_char,c_int
-   character(c_char) , dimension(*) :: string,nullchar
-   integer(c_int) , value :: base
+   character(c_char), dimension(*) :: string,nullchar
+   integer(c_int), value :: base
    integer(c_long) :: ret
    end function c_strtol
 end interface
@@ -327,15 +344,17 @@ c_string=trim(mode)//c_null_char
 c_mode=c_strtol(c_string,nullchar,8_c_int)
 c_fname=trim(fname)//c_null_char
 iret=c_mkdir(c_fname,c_mode)
+if(present(exitstat))exitstat=iret
 end subroutine f_mkdir
 
-subroutine f_rmdir(fname,iret)
+subroutine f_rmdir(fname,exitstat)
 character(len=*), intent(in) :: fname
-integer , intent(out) :: iret
+integer, intent(out), optional :: exitstat
+integer :: iret
 interface
    function c_rmdir(fname) bind(c,name='rmdir') result(ret)
    import :: c_char,c_int 
-   character(c_char) , dimension(*) , intent(in) :: fname
+   character(c_char), dimension(*), intent(in) :: fname
    integer(c_int) :: ret
    end function c_rmdir
 end interface
@@ -343,15 +362,17 @@ character(len=len_trim(fname)+1) :: c_fname
 
 c_fname=trim(fname)//c_null_char
 iret=c_rmdir(c_fname)
+if(present(exitstat))exitstat=iret
 end subroutine f_rmdir
 
-subroutine f_chdir(fname,iret)
+subroutine f_chdir(fname,exitstat)
 character(len=*), intent(in) :: fname
-integer , intent(out) :: iret
+integer, intent(out), optional :: exitstat
+integer :: iret
 interface
    function c_chdir(fname) bind(c,name='chdir') result(ret)
    import :: c_char,c_int 
-   character(c_char) , dimension(*) , intent(in) :: fname
+   character(c_char), dimension(*), intent(in) :: fname
    integer(c_int) :: ret
    end function c_chdir
 end interface
@@ -359,17 +380,18 @@ character(len=len_trim(fname)+1) :: c_fname
 
 c_fname=trim(fname)//c_null_char
 iret=c_chdir(c_fname)
+if(present(exitstat))exitstat=iret
 end subroutine f_chdir
 
-subroutine f_exit(exitcode)
-integer :: exitcode
+subroutine f_exit(exitstat)
+integer :: exitstat
 interface
-    subroutine c_exit(exitcode) bind(c,name='exit')
+    subroutine c_exit(exitstat) bind(c,name='exit')
     import :: c_int
-    integer(c_int),value::exitcode
+    integer(c_int),value::exitstat
     end subroutine c_exit
 end interface
-call c_exit(int(exitcode,kind=c_int))
+call c_exit(exitstat)
 end subroutine f_exit
 
 end module syscall
