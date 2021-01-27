@@ -58,26 +58,28 @@ type, bind(c) :: timespec
 end type
 
 interface
+   integer function handler(signum)
+   implicit none
+   integer :: signum
+   end function handler
+
    function f_getpid() bind(c,name='getpid')
    import :: c_int
    integer(c_int) :: f_getpid
    end function f_getpid
 end interface   
 
+procedure(handler), pointer :: handler_ptr=>null()
+
 contains
 
-subroutine f_signal(signum,handler)
+subroutine f_signal(signum,handler_routine)
 integer, intent(in) :: signum
+procedure(handler):: handler_routine
 type(c_funptr) :: iret
 type(c_funptr) :: c_handler
 
 interface
-   subroutine handler(signum) bind(c)
-   import :: c_int
-   implicit none
-   integer(c_int), intent(in), value :: signum
-   end subroutine handler
-
    function c_signal(signal, sighandler) bind(c,name='signal')
    import :: c_int,c_funptr 
    implicit none
@@ -87,9 +89,16 @@ interface
    end function c_signal
 end interface
 
-c_handler=c_funloc(handler)
+handler_ptr=>handler_routine
+c_handler=c_funloc(f_handler)
 iret=c_signal(signum,c_handler)
 end subroutine f_signal
+
+subroutine f_handler(signum) bind(c)
+integer(c_int), intent(in), value :: signum
+integer :: iret
+iret=handler_ptr(signum)
+end subroutine f_handler
 
 subroutine f_alarm(seconds,remaining)
 integer, intent(in) :: seconds
