@@ -59,7 +59,6 @@ end type
 
 abstract interface
    subroutine handler(signum)
-   implicit none
    integer :: signum
    end subroutine handler
 end interface
@@ -84,7 +83,6 @@ type(c_funptr) :: c_handler
 interface
    function c_signal(signal, sighandler) bind(c,name='signal')
    import :: c_int,c_funptr 
-   implicit none
    integer(c_int), value, intent(in) :: signal
    type(c_funptr), value, intent(in) :: sighandler
    type(c_funptr) :: c_signal
