@@ -57,19 +57,21 @@ type, bind(c) :: timespec
    integer(c_long) :: tv_nsec
 end type
 
-interface
-   integer function handler(signum)
+abstract interface
+   subroutine handler(signum)
    implicit none
    integer :: signum
-   end function handler
+   end subroutine handler
+end interface
 
+interface
    function f_getpid() bind(c,name='getpid')
    import :: c_int
    integer(c_int) :: f_getpid
    end function f_getpid
 end interface   
 
-procedure(handler), pointer :: handler_ptr=>null()
+procedure(handler), pointer :: handler_ptr => null()
 
 contains
 
@@ -89,15 +91,14 @@ interface
    end function c_signal
 end interface
 
-handler_ptr=>handler_routine
+handler_ptr => handler_routine
 c_handler=c_funloc(f_handler)
 iret=c_signal(signum,c_handler)
 end subroutine f_signal
 
 subroutine f_handler(signum) bind(c)
 integer(c_int), intent(in), value :: signum
-integer :: iret
-iret=handler_ptr(signum)
+call handler_ptr(signum)
 end subroutine f_handler
 
 subroutine f_alarm(seconds,remaining)
