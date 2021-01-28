@@ -78,7 +78,8 @@ type(handler_pointer), dimension(no_of_signals) :: handler_ptr_array
 
 contains
 
-!Drop the 2nd arg below to ignore signal signum.
+!Drop the 2nd arg below to ignore signal signum. Any sleep or idle-wait would be 
+!interrupted though when the signal is caught.
 !Use system_exit as the handler for aborting on signal signum with exitcode=signum
 subroutine f_signal(signum,handler_routine)
 integer, intent(in) :: signum
