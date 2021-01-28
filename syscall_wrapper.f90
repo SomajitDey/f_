@@ -70,7 +70,11 @@ interface
    end function f_getpid
 end interface   
 
-procedure(handler), pointer :: handler_ptr => null()
+type handler_pointer
+    procedure(handler), pointer, nopass :: ptr
+end type handler_pointer
+integer, parameter :: no_of_signals=64  !Obtained with command: kill -l
+type(handler_pointer), dimension(no_of_signals) :: handler_ptr_array
 
 contains
 
@@ -89,14 +93,14 @@ interface
    end function c_signal
 end interface
 
-handler_ptr => handler_routine
+handler_ptr_array(signum)%ptr => handler_routine
 c_handler=c_funloc(f_handler)
 iret=c_signal(signum,c_handler)
 end subroutine f_signal
 
 subroutine f_handler(signum) bind(c)
 integer(c_int), intent(in), value :: signum
-call handler_ptr(signum)
+call handler_ptr_array(signum)%ptr(signum)
 end subroutine f_handler
 
 subroutine f_alarm(seconds,remaining)
