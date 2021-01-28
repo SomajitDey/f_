@@ -78,9 +78,11 @@ type(handler_pointer), dimension(no_of_signals) :: handler_ptr_array
 
 contains
 
+!Drop the 2nd arg below to ignore signal signum.
+!Use system_exit as the handler for aborting on signal signum with exitcode=signum
 subroutine f_signal(signum,handler_routine)
 integer, intent(in) :: signum
-procedure(handler):: handler_routine
+procedure(handler), optional:: handler_routine
 type(c_funptr) :: iret
 type(c_funptr) :: c_handler
 
@@ -93,14 +95,18 @@ interface
    end function c_signal
 end interface
 
-handler_ptr_array(signum)%ptr => handler_routine
+if(present(handler_routine))then
+    handler_ptr_array(signum)%ptr => handler_routine
+else
+    handler_ptr_array(signum)%ptr => null(handler_ptr_array(signum)%ptr)
+endif
 c_handler=c_funloc(f_handler)
 iret=c_signal(signum,c_handler)
 end subroutine f_signal
 
 subroutine f_handler(signum) bind(c)
 integer(c_int), intent(in), value :: signum
-call handler_ptr_array(signum)%ptr(signum)
+if(associated(handler_ptr_array(signum)%ptr))call handler_ptr_array(signum)%ptr(signum)
 end subroutine f_handler
 
 subroutine f_alarm(seconds,remaining)
