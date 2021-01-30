@@ -5,6 +5,11 @@
 Here is a style guide that we like and that seems to be prevalent 
 in most scientific codes (as well as the Fortran standard library).
 
+Free-form:
+
+Use free-form source-code with ext .f90. Max. no. of characters per line = 132.
+However, try to stay within 85. Break lines with trailing &.
+                                                                                                    
 Naming Convention:
 
 1. Use lowercase for all Fortran constructs (do, subroutine, module, ...).
@@ -33,3 +38,16 @@ Indentation:
 
 Use 4 spaces indentation (set your source-code editor to put 4 Spaces when you press
 Tab).
+
+Comma, :: , Operators(+/=/.AND./.NOT./> etc.), => :
+
+1. Every comma should be followed by a single space. 
+2. :: in declarations should have a space on each side.
+3. Operators should not have space on any side. Use > instead of .gt. and /= instead of .ne.
+4. The pointer assignment => should have space on both sides. 
+
+Other Advisories:
+
+Use dowhile, elseif instead of do while and else if.
+
+Do not put space between a procedure name and the following brackets.
