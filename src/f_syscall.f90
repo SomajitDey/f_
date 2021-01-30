@@ -37,8 +37,10 @@
 !************************************************************************
 
 module f_syscall
+
 use iso_c_binding
 use iso_fortran_env
+
 implicit none
 private
 
