@@ -1,0 +1,35 @@
+
+                            STYLE GUIDE
+          Ref: https://www.fortran90.org/src/best-practices.html
+                            
+Here is a style guide that we like and that seems to be prevalent 
+in most scientific codes (as well as the Fortran standard library).
+
+Naming Convention:
+
+1. Use lowercase for all Fortran constructs (do, subroutine, module, ...).
+
+2. Follow short mathematical notation for mathematical variables/functions
+(Ylm, Gamma, gamma, Enl, Rnl, ...).
+
+3. For other names use all lowercase: try to keep names to one or two syllables;
+if more are required, use underscores to clarify (sortpair, whitechar, meshexp, 
+numstrings, linspace, meshgrid, argsort, spline, spline_interp, spline_interpolate,
+stoperr, stop_error, meshexp_der). For example “spline interpolation” can be 
+shortened to spline_interpolation, spline_interpolate, spline_interp, spline, but
+not to splineint (“int” could mean integration, integer, etc. — too much ambiguity,
+even in the clear context of a computational code). This is in contrast to 
+get_argument() where getarg() is perfectly clean and clear.
+
+The above are general guidelines. In general, choosing the right name certainly 
+depends on the word being truncated as to whether the first syllable is sufficient. 
+Usually it is but clearly not always. Thus some thought should go into step “try to
+keep names to 2 syllables or less” since it can really affect the indicativeness and
+simplicity. Simple consistent naming rules are a real help in this regard – for both
+collaboration and for one’s own sanity when going back to some old code you haven’t 
+seen in while.
+
+Indentation:
+
+Use 4 spaces indentation (set your source-code editor to put 4 Spaces when you press
+Tab).
