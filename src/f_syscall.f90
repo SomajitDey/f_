@@ -27,7 +27,7 @@
 ! extensions for these system calls.
 !
 ! These module procedures and interfaces basically bind to functions in 
-! the glibc library that ships with Linux.
+! the glibc library that ships with GNU/Linux.
 !************************************************************************
 
 ! SIGSEGV RUNTIME ERROR:
@@ -42,20 +42,28 @@ use iso_fortran_env
 implicit none
 private
 
+!~~~~~~~~~~~~~~~~~~~~~~~~~BEGIN CONTENTS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !Signal
 public :: f_signal, f_kill, f_alarm
+
 !Sleep
 public :: f_nanosleep, f_sleep
+
 !Process and Host
 public :: f_getpid, f_getcwd, f_gethostname
+
 !Exit with given exitcode
 public :: f_exit
+
 !Directory
 public :: f_mkdir, f_rmdir, f_chdir
+
 !File or Path (some apply to directory as well, everything in linux is a file)
 public :: f_rename, f_link, f_symlink, f_unlink, f_chmod
-!Time since Unix epoch
+
+!Number of seconds since the Epoch, 1970-01-01 00:00:00 +0000 (UTC)
 public :: f_time
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~END CONTENTS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 type, bind(c) :: timespec
     integer(c_long) :: tv_sec, tv_nsec
