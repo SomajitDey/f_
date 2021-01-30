@@ -41,12 +41,24 @@ use iso_c_binding
 use iso_fortran_env
 implicit none
 private
-public :: f_signal,f_alarm,f_chmod,f_getpid,f_rename,f_sleep,f_kill,f_unlink,f_symlink,f_link,f_getcwd,f_time,f_nanosleep, &
-f_gethostname,f_mkdir,f_rmdir,f_chdir,f_exit
+
+!Signal
+public :: f_signal, f_kill, f_alarm
+!Sleep
+public :: f_nanosleep, f_sleep
+!Process and Host
+public :: f_getpid, f_getcwd, f_gethostname
+!Exit with given exitcode
+public :: f_exit
+!Directory
+public :: f_mkdir, f_rmdir, f_chdir
+!File or Path (some apply to directory as well, everything in linux is a file)
+public :: f_rename, f_link, f_symlink, f_unlink, f_chmod
+!Time since Unix epoch
+public :: f_time
 
 type, bind(c) :: timespec
-   integer(c_long) :: tv_sec
-   integer(c_long) :: tv_nsec
+    integer(c_long) :: tv_sec, tv_nsec
 end type
 
 abstract interface
@@ -66,13 +78,13 @@ type handler_pointer
     procedure(handler), pointer, nopass :: ptr
 end type handler_pointer
 integer, parameter :: no_of_signals=64  !Obtained with command: kill -l
-type(handler_pointer), dimension(no_of_signals) :: handler_ptr_array
+type(handler_pointer) :: handler_ptr_array(no_of_signals)
 
 contains
 
-!Drop the 2nd arg below to ignore signal signum. Any sleep or idle-wait would be 
-!interrupted though when the signal is caught.
-!Use system_exit as the handler for aborting on signal signum with exitcode=signum
+!Drop the 2nd arg below to install a do-nothing handler. Note that any sleep or 
+!idle-wait would be interrupted though when the signal signum is caught.
+!Use system_exit as the handler to abort on signal signum with exitcode=signum
 subroutine f_signal(signum,handler_routine)
 integer, intent(in) :: signum
 procedure(handler), optional:: handler_routine
