@@ -20,12 +20,25 @@
 ! along with this program.  If not, see <https://www.gnu.org/licenses/>.
 !************************************************************************
 
-module f_
+! BRIEF:
+! This module contains some portable utility routines in modern fortran.
+! Generic interfaces may often be required to accomodate for the different
+! types a procedure argument might have. E.g. crossproduct may take both
+! real(4) and real(8) arguments.
+!************************************************************************
 
-use f_syscall
-use f_utils
+! SIGSEGV RUNTIME ERROR:
+! Any such error possibly arises from type mismatch when porting from 32-bit to 
+! 64-bit. E.g. equating INT32 with C_LONG variable type. C_LONG can take both 32-bit
+! and 64-bit form depending on the implementation.
+!************************************************************************
+
+module f_utils
 
 implicit none
-public
+private
 
-end module f_
+!~~~~~~~~~~~~~~~~~~~~~~~~~BEGIN CONTENTS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~END CONTENTS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+end module f_utils
