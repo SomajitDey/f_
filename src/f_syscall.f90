@@ -158,8 +158,8 @@ if(present(remaining))remaining=iret
 end subroutine f_alarm
 
 subroutine f_nanosleep(s, ns, rem_s, rem_ns)
-integer(int32), intent(in) :: s, ns
-integer(int32), intent(out) :: rem_s, rem_ns
+integer, intent(in) :: s, ns
+integer, intent(out) :: rem_s, rem_ns
 type(timespec) :: f_req, f_rem
 interface
    subroutine c_nanosleep(req, rem) bind(c, name='nanosleep')
@@ -171,8 +171,8 @@ end interface
 f_req%tv_sec=int(s, kind=c_long)
 f_req%tv_nsec=int(ns, kind=c_long)
 call c_nanosleep(f_req, f_rem)
-rem_s=int(f_rem%tv_sec, kind=int32)
-rem_ns=int(f_rem%tv_nsec, kind=int32)
+rem_s=int(f_rem%tv_sec, kind(rem_s))
+rem_ns=int(f_rem%tv_nsec, kind(rem_ns))
 end subroutine f_nanosleep
 
 subroutine f_sleep(seconds, remaining)
