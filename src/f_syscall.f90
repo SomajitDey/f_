@@ -48,8 +48,8 @@ private
 !Signal
 public :: f_signal, f_kill, f_alarm, f_raise
 
-!Sleep
-public :: f_nanosleep, f_sleep
+!Sleep and Pause
+public :: f_nanosleep, f_sleep, f_pause
 
 !Process and Host
 public :: f_getpid, f_getcwd, f_gethostname
@@ -78,11 +78,14 @@ abstract interface
 end interface
 
 interface
-   function f_getpid() bind(c, name='getpid')
-   import :: c_int
-   integer(c_int) :: f_getpid
-   end function f_getpid
-end interface   
+    function f_getpid() bind(c, name='getpid')
+    import :: c_int
+    integer(c_int) :: f_getpid
+    end function f_getpid
+
+    subroutine f_pause() bind(c, name='pause')
+    end subroutine f_pause
+end interface
 
 type handler_pointer
     procedure(handler), pointer, nopass :: ptr
