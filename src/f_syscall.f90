@@ -39,7 +39,7 @@
 module f_syscall
 
 use iso_c_binding
-use iso_fortran_env
+use iso_fortran_env, only: int64
 
 implicit none
 private
@@ -414,8 +414,9 @@ iret=c_chmod(c_filename, c_mode)
 if(present(exitstat))exitstat=iret
 end subroutine f_chmod
 
-function f_time()
-integer(int32) :: f_time
+function f_time(long)
+integer :: f_time
+integer(int64), optional :: long
 integer(c_long) ::f_time_c_long 
 interface
    subroutine c_time(tloc) bind(c, name='time')
@@ -424,7 +425,8 @@ interface
    end subroutine c_time
 end interface
 call c_time(f_time_c_long)
-f_time=int(f_time_c_long, kind(f_time))   
+f_time=int(f_time_c_long, kind(f_time))
+if(present(long))long=int(f_time_c_long, kind(long))
 end function f_time
 
 end module f_syscall
