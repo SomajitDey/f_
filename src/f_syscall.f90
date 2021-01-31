@@ -144,7 +144,6 @@ subroutine f_alarm(seconds, remaining)
 integer, intent(in) :: seconds
 integer, intent(out), optional :: remaining
 integer :: iret
-
 interface
    function c_alarm(sec) bind(c, name='alarm') result(ret)
    import :: c_int
