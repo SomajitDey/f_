@@ -46,7 +46,7 @@ private
 
 !~~~~~~~~~~~~~~~~~~~~~~~~~BEGIN CONTENTS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !Signal
-public :: f_signal, f_kill, f_alarm
+public :: f_signal, f_kill, f_alarm, f_raise
 
 !Sleep
 public :: f_nanosleep, f_sleep
@@ -156,6 +156,22 @@ end interface
 iret=c_alarm(seconds)
 if(present(remaining))remaining=iret
 end subroutine f_alarm
+
+subroutine f_raise(signal, exitstat)
+integer, intent(in) :: signal
+integer, intent(out), optional :: exitstat
+integer :: iret
+interface
+   function c_raise(sig) bind(c, name='raise') result(ret)
+   import :: c_int
+   integer(c_int), value :: sig
+   integer(c_int) :: ret
+   end function c_raise
+end interface   
+
+iret=c_raise(signal)
+if(present(exitstat))exitstat=iret
+end subroutine f_raise
 
 subroutine f_nanosleep(s, ns, rem_s, rem_ns)
 integer, intent(in) :: s, ns
