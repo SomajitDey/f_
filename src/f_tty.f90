@@ -54,8 +54,8 @@ private
 integer, parameter :: red=1, green=2, yellow=3, blue=4, magenta=5, cyan=6
 
 !~~~~~~~~~~~~~~~~~~~~~~~~~BEGIN CONTENTS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!Input single character without pressing Enter
-public :: f_getch
+!Press any key
+public :: f_keypress
 
 !Display style
 public :: f_bold, f_outstanding, f_underline, f_italic, f_blink
@@ -75,19 +75,9 @@ public :: f_hideprompt, f_showprompt
 
 contains
 
-character function f_getch(echo) !Works for bash only
-logical, intent(in), optional :: echo
-if(present(echo))then
-    if(echo)then
-        call execute_command_line('bash -c "read -n 1 f_getch_private"')
-    else
-        call execute_command_line('bash -c "read -sn 1 f_getch_private"')
-    endif
-else
-    call execute_command_line('bash -c "read -sn 1 f_getch_private"')
-endif
-call get_environment_variable('f_getch_private',f_getch)
-end function f_getch
+subroutine f_keypress()
+call execute_command_line('bash -c "read -sn 1 f_getch_private"')
+end subroutine f_keypress
 
 subroutine f_bold(string, noadvance)
 character(len=*), intent(in) :: string
