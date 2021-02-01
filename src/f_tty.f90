@@ -64,7 +64,7 @@ public :: f_keypress
 public :: f_bold, f_outstanding, f_underline, f_italic, f_blink
 
 !Display color
-!public :: f_red, f_green, f_yellow, f_blue, f_magenta, f_cyan
+public :: f_red, f_green, f_yellow, f_blue, f_magenta, f_cyan
 
 !Get #Lines(Rows) and #Columns in terminal window
 public :: f_termheight, f_termwidth
@@ -151,6 +151,102 @@ if(present(noadvance))then
 endif
 call execute_command_line('tput blink && echo '//showme//' && tput sgr0')
 end subroutine f_blink
+
+subroutine f_red(string, noadvance)
+character(len=*), intent(in) :: string
+logical, intent(in), optional :: noadvance
+character(len=len_trim(adjustl(string))) :: showme
+showme=trim(adjustl(string))
+if(present(noadvance))then
+    if(noadvance)then
+        call execute_command_line('tput setaf '//f_int_to_char(red)// &
+                               ' && echo -n '//showme//' && tput sgr0')
+        return
+    endif
+endif
+call execute_command_line('tput setaf '//f_int_to_char(red)// &
+                                  ' && echo '//showme//' && tput sgr0')
+end subroutine f_red
+
+subroutine f_green(string, noadvance)
+character(len=*), intent(in) :: string
+logical, intent(in), optional :: noadvance
+character(len=len_trim(adjustl(string))) :: showme
+showme=trim(adjustl(string))
+if(present(noadvance))then
+    if(noadvance)then
+        call execute_command_line('tput setaf '//f_int_to_char(green)// &
+                               ' && echo -n '//showme//' && tput sgr0')
+        return
+    endif
+endif
+call execute_command_line('tput setaf '//f_int_to_char(green)// &
+                                  ' && echo '//showme//' && tput sgr0')
+end subroutine f_green
+
+subroutine f_yellow(string, noadvance)
+character(len=*), intent(in) :: string
+logical, intent(in), optional :: noadvance
+character(len=len_trim(adjustl(string))) :: showme
+showme=trim(adjustl(string))
+if(present(noadvance))then
+    if(noadvance)then
+        call execute_command_line('tput setaf '//f_int_to_char(yellow)// &
+                               ' && echo -n '//showme//' && tput sgr0')
+        return
+    endif
+endif
+call execute_command_line('tput setaf '//f_int_to_char(yellow)// &
+                                  ' && echo '//showme//' && tput sgr0')
+end subroutine f_yellow
+
+subroutine f_blue(string, noadvance)
+character(len=*), intent(in) :: string
+logical, intent(in), optional :: noadvance
+character(len=len_trim(adjustl(string))) :: showme
+showme=trim(adjustl(string))
+if(present(noadvance))then
+    if(noadvance)then
+        call execute_command_line('tput setaf '//f_int_to_char(blue)// &
+                               ' && echo -n '//showme//' && tput sgr0')
+        return
+    endif
+endif
+call execute_command_line('tput setaf '//f_int_to_char(blue)// &
+                                  ' && echo '//showme//' && tput sgr0')
+end subroutine f_blue
+
+subroutine f_magenta(string, noadvance)
+character(len=*), intent(in) :: string
+logical, intent(in), optional :: noadvance
+character(len=len_trim(adjustl(string))) :: showme
+showme=trim(adjustl(string))
+if(present(noadvance))then
+    if(noadvance)then
+        call execute_command_line('tput setaf '//f_int_to_char(magenta)// &
+                               ' && echo -n '//showme//' && tput sgr0')
+        return
+    endif
+endif
+call execute_command_line('tput setaf '//f_int_to_char(magenta)// &
+                                  ' && echo '//showme//' && tput sgr0')
+end subroutine f_magenta
+
+subroutine f_cyan(string, noadvance)
+character(len=*), intent(in) :: string
+logical, intent(in), optional :: noadvance
+character(len=len_trim(adjustl(string))) :: showme
+showme=trim(adjustl(string))
+if(present(noadvance))then
+    if(noadvance)then
+        call execute_command_line('tput setaf '//f_int_to_char(cyan)// &
+                               ' && echo -n '//showme//' && tput sgr0')
+        return
+    endif
+endif
+call execute_command_line('tput setaf '//f_int_to_char(cyan)// &
+                                  ' && echo '//showme//' && tput sgr0')
+end subroutine f_cyan
 
 integer function f_termheight()
 integer :: pipe
