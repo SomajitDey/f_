@@ -39,8 +39,28 @@ implicit none
 private
 
 !~~~~~~~~~~~~~~~~~~~~~~~~~BEGIN CONTENTS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!Integer-Character interconversion
+public :: f_int_to_char, f_char_to_int
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~END CONTENTS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 contains
+
+pure function int_to_string(num)
+integer, intent(in) :: num
+character(len=256) :: int_to_string
+write(int_to_string,'(I0)')num
+end function int_to_string
+
+function f_int_to_char(num)
+integer, intent(in) :: num
+character(len_trim(int_to_string(num))) :: f_int_to_char
+f_int_to_char=trim(int_to_string(num))
+end function f_int_to_char
+
+function f_char_to_int(string)
+character(len=*), intent(in) :: string
+integer :: f_char_to_int
+read(string,*)f_char_to_int
+end function f_char_to_int
 
 end module f_utils
