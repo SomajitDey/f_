@@ -49,6 +49,7 @@
 module f_tty
 
 use f_utils
+use f_syscall
 
 implicit none
 private
@@ -66,7 +67,7 @@ public :: f_bold, f_outstanding, f_underline, f_italic, f_blink
 !public :: f_red, f_green, f_yellow, f_blue, f_magenta, f_cyan
 
 !Get #Lines(Rows) and #Columns in terminal window
-!public :: f_termheight, f_termwidth
+public :: f_termheight, f_termwidth
 
 !Clear screen
 public :: f_clrscr
@@ -150,6 +151,20 @@ if(present(noadvance))then
 endif
 call execute_command_line('tput blink && echo '//showme//' && tput sgr0')
 end subroutine f_blink
+
+integer function f_termheight()
+integer :: pipe
+call f_popen('tput lines',pipe)
+read(pipe,*)f_termheight
+call f_pclose(pipe)
+end function f_termheight
+
+integer function f_termwidth()
+integer :: pipe
+call f_popen('tput cols',pipe)
+read(pipe,*)f_termwidth
+call f_pclose(pipe)
+end function f_termwidth
 
 subroutine f_clrscr(nlines)
 integer, intent(in), optional :: nlines
