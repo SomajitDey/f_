@@ -72,12 +72,12 @@ character(len=*) :: string
 call execute_command_line('tput smso && echo '//string//' && tput rmso')
 end subroutine f_outstanding
 
-subroutine f_clrscr(height)
-integer, optional :: height
+subroutine f_clrscr(nrows)
+integer, optional :: nrows
 character(len=4) :: nlines
-if(present(height))then
-    write(nlines,'(I0)')height
-    if(height<0)then
+if(present(nrows))then
+    write(nlines,'(I0)')nrows
+    if(nrows<0)then
         call execute_command_line('tput clear')
     else
         call execute_command_line('tput cuu '//trim(nlines)//' && tput ed')
