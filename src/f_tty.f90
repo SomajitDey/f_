@@ -61,10 +61,10 @@ public :: f_getch
 public :: f_bold, f_outstanding, f_underline, f_italic, f_blink
 
 !Display color
-public :: f_red, f_green, f_yellow, f_blue, f_magenta, f_cyan
+!public :: f_red, f_green, f_yellow, f_blue, f_magenta, f_cyan
 
 !Get #Lines(Rows) and #Columns in terminal window
-public :: f_termheight, f_termwidth
+!public :: f_termheight, f_termwidth
 
 !Clear screen
 public :: f_clrscr
@@ -78,36 +78,85 @@ contains
 character function f_getch(echo) !Works for bash only
 logical, intent(in), optional :: echo
 if(present(echo))then
-    if(echo)call execute_command_line('read -n 1 f_getch_private')
+    if(echo)then
+        call execute_command_line('bash -c "read -n 1 f_getch_private"')
+    else
+        call execute_command_line('bash -c "read -sn 1 f_getch_private"')
+    endif
 else
-    call execute_command_line('read -sn 1 f_getch_private')
+    call execute_command_line('bash -c "read -sn 1 f_getch_private"')
 endif
 call get_environment_variable('f_getch_private',f_getch)
 end function f_getch
 
-subroutine f_bold(string,noadvance)
+subroutine f_bold(string, noadvance)
 character(len=*), intent(in) :: string
-call execute_command_line('tput bold && echo '//string//' && tput sgr0')
+logical, intent(in), optional :: noadvance
+character(len=len_trim(adjustl(string))) :: showme
+showme=trim(adjustl(string))
+if(present(noadvance))then
+    if(noadvance)then
+        call execute_command_line('tput bold && echo -n '//showme//' && tput sgr0')
+        return
+    endif
+endif
+call execute_command_line('tput bold && echo '//showme//' && tput sgr0')
 end subroutine f_bold
 
-subroutine f_outstanding(string)
+subroutine f_outstanding(string, noadvance)
 character(len=*), intent(in) :: string
-call execute_command_line('tput smso && echo '//string//' && tput rmso')
+logical, intent(in), optional :: noadvance
+character(len=len_trim(adjustl(string))) :: showme
+showme=trim(adjustl(string))
+if(present(noadvance))then
+    if(noadvance)then
+        call execute_command_line('tput smso && echo -n '//showme//' && tput rmso')
+        return
+    endif
+endif
+call execute_command_line('tput smso && echo '//showme//' && tput rmso')
 end subroutine f_outstanding
 
-subroutine f_underline(string)
+subroutine f_underline(string, noadvance)
 character(len=*), intent(in) :: string
-call execute_command_line('tput smul && echo '//string//' && tput rmul')
+logical, intent(in), optional :: noadvance
+character(len=len_trim(adjustl(string))) :: showme
+showme=trim(adjustl(string))
+if(present(noadvance))then
+    if(noadvance)then
+        call execute_command_line('tput smul && echo -n '//showme//' && tput rmul')
+        return
+    endif
+endif
+call execute_command_line('tput smul && echo '//showme//' && tput rmul')
 end subroutine f_underline
 
-subroutine f_italic(string)
+subroutine f_italic(string, noadvance)
 character(len=*), intent(in) :: string
-call execute_command_line('tput sitm && echo '//string//' && tput ritm')
+logical, intent(in), optional :: noadvance
+character(len=len_trim(adjustl(string))) :: showme
+showme=trim(adjustl(string))
+if(present(noadvance))then
+    if(noadvance)then
+        call execute_command_line('tput sitm && echo -n '//showme//' && tput ritm')
+        return
+    endif
+endif
+call execute_command_line('tput sitm && echo '//showme//' && tput ritm')
 end subroutine f_italic
 
-subroutine f_blink(string)
+subroutine f_blink(string, noadvance)
 character(len=*), intent(in) :: string
-call execute_command_line('tput blink && echo '//string//' && tput sgr0')
+logical, intent(in), optional :: noadvance
+character(len=len_trim(adjustl(string))) :: showme
+showme=trim(adjustl(string))
+if(present(noadvance))then
+    if(noadvance)then
+        call execute_command_line('tput blink && echo -n '//showme//' && tput sgr0')
+        return
+    endif
+endif
+call execute_command_line('tput blink && echo '//showme//' && tput sgr0')
 end subroutine f_blink
 
 subroutine f_clrscr(nlines)
