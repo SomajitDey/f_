@@ -1,4 +1,4 @@
-!@Somajit Dey <somajit@users.sourceforge.net> January 2021
+!@Somajit Dey <somajit@users.sourceforge.net> February 2021
 !
 ! Copyright (C) 2020-2021 Somajit Dey
 ! Department of Physics, University of Calcutta
@@ -40,6 +40,7 @@ module f_syscall
 
 use iso_c_binding
 use iso_fortran_env, only: int64
+use f_utils
 
 implicit none
 private
@@ -65,6 +66,9 @@ public :: f_rename, f_link, f_symlink, f_unlink, f_chmod
 
 !Number of seconds since the Epoch, 1970-01-01 00:00:00 +0000 (UTC)
 public :: f_time
+
+!Read output of a simple command and then close pipe
+public :: f_popen, f_pclose
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~END CONTENTS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 type, bind(c) :: timespec
@@ -446,5 +450,25 @@ call c_time(f_time_c_long)
 f_time=int(f_time_c_long, kind(f_time))
 if(present(long))long=int(f_time_c_long, kind(long))
 end function f_time
+
+!The following works for single commands only, not multiple commands joined with && or ;
+subroutine f_popen(command,pipe)
+character(len=*), intent(in) :: command
+integer, intent(out) :: pipe
+integer :: len_pipename, pid, now
+character(len=:), allocatable :: pipename
+pid=f_getpid()
+now=f_time()
+len_pipename=len_trim('.'//f_int_to_char(pid)//'_'//f_int_to_char(now))
+allocate(character(len_pipename) :: pipename)
+pipename='.'//f_int_to_char(pid)//'_'//f_int_to_char(now)
+call execute_command_line(trim(adjustl(command))//' > '//pipename)
+open(newunit=pipe, file=pipename, form='formatted', access='sequential', action='read')
+end subroutine f_popen
+
+subroutine f_pclose(pipe)
+integer, intent(in) :: pipe
+close(pipe, status='delete')
+end subroutine f_pclose
 
 end module f_syscall

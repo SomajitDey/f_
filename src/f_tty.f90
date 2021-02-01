@@ -48,6 +48,8 @@
 
 module f_tty
 
+use f_utils
+
 implicit none
 private
 
