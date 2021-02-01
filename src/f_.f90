@@ -24,6 +24,7 @@ module f_
 
 use f_syscall
 use f_utils
+use f_tty
 
 implicit none
 public
