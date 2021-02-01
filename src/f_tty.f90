@@ -76,7 +76,7 @@ public :: f_hideprompt, f_showprompt
 contains
 
 subroutine f_keypress()
-call execute_command_line('bash -c "read -sn 1 f_getch_private"')
+call execute_command_line('bash -c "read -sn 1"')
 end subroutine f_keypress
 
 subroutine f_bold(string, noadvance)
