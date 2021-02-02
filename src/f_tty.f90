@@ -83,6 +83,11 @@ subroutine f_keypress()
 call execute_command_line('bash -c "read -sn 1"')
 end subroutine f_keypress
 
+!If echo and timeout are both present below and echo is .true.,
+!the users won't see what they typed until they complete the input, 
+!or they press Enter(for nchar=-1). If time expires before input
+!completion, it would be considered a null input.
+!When using for password (with or w/o timeout), echo=.false. is recommended.
 function f_getch(nchars,echo,timeout)
 integer, intent(in), optional :: nchars, timeout
 logical, intent(in), optional :: echo
@@ -126,13 +131,8 @@ end function f_getch
 
 subroutine f_getyesno(assertive)
 logical, intent(out) :: assertive
-integer :: pipe
-character :: reply
 do
-    call f_popen('bash -c "read -sn 1 && echo \$REPLY"',pipe)
-    read(pipe,'(A)')reply
-    call f_pclose(pipe)
-    select case(reply)
+    select case(f_getch())
     case('y', 'Y')
         assertive=.true.
         exit
