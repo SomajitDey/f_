@@ -58,7 +58,7 @@ integer, parameter :: red=1, green=2, yellow=3, blue=4, magenta=5, cyan=6
 
 !~~~~~~~~~~~~~~~~~~~~~~~~~BEGIN CONTENTS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !Press any key
-public :: f_keypress
+public :: f_keypress, f_getyesno
 
 !Display style
 public :: f_bold, f_outstanding, f_underline, f_italic, f_blink
@@ -81,6 +81,31 @@ contains
 subroutine f_keypress()
 call execute_command_line('bash -c "read -sn 1"')
 end subroutine f_keypress
+
+subroutine f_getyesno(assertive)
+logical, intent(out) :: assertive
+integer :: pipe
+character :: reply
+do
+    call f_popen('bash -c "read -sn 1 && echo \$REPLY"',pipe)
+    read(pipe,'(A)')reply
+    call f_pclose(pipe)
+    select case(reply)
+    case('y', 'Y')
+        assertive=.true.
+        exit
+    case('n', 'N')
+        assertive=.false.
+        exit
+    case default
+        call f_italic('Press either ', .true.)
+        call f_green('y', .true.)
+        call f_italic(' or ', .true.)
+        call f_red('n')
+        cycle
+    end select
+enddo
+end subroutine f_getyesno
 
 subroutine f_bold(string, noadvance)
 character(len=*), intent(in) :: string
