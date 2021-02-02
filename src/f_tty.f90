@@ -87,7 +87,7 @@ function f_getch(nchars,echo,timeout)
 integer, intent(in), optional :: nchars, timeout
 logical, intent(in), optional :: echo
 character(:), allocatable :: f_getch, buffer
-integer :: numchars, pipe, timeout_secs
+integer :: numchars, pipe, timeout_secs, istat
 
 if(present(nchars))then
     if(nchars>0)then
@@ -105,12 +105,14 @@ else
     timeout_secs=-1
 endif
 if(timeout_secs>=0)then
-    call f_popen('bash -c "read -sn 1 -t '//f_int_to_char(timeout_secs)// &
-                                                  ' && echo \$REPLY"',pipe)
+    call f_popen('bash -c "read -sn '//f_int_to_char(numchars)// &
+                 ' -t '//f_int_to_char(timeout_secs)//' && echo \$REPLY"',pipe)
 else
-    call f_popen('bash -c "read -sn 1 && echo \$REPLY"',pipe)
+    call f_popen('bash -c "read -sn '//f_int_to_char(numchars)// &
+                 ' && echo \$REPLY"',pipe)
 endif
-read(pipe,'(A)')buffer
+read(pipe,'(A)',iostat=istat)buffer
+if(istat/=0)buffer=''
 call f_pclose(pipe)
 allocate(character(len_trim(buffer)) :: f_getch)
 f_getch=trim(buffer)
