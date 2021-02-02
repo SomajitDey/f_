@@ -91,42 +91,27 @@ end subroutine f_keypress
 function f_getch(nchars,echo,timeout)
 integer, intent(in), optional :: nchars, timeout
 logical, intent(in), optional :: echo
-character(:), allocatable :: f_getch, buffer
-integer :: numchars, pipe, timeout_secs, istat
-
+character(:), allocatable :: f_getch, cmd, nflag, sflag, tflag
+integer :: pipe, istat
+!Setting defaults first:
+nflag='-n 1'
+sflag='-s'
+tflag=''
 if(present(nchars))then
-    if(nchars>0)then
-        numchars=nchars
-    else
-        numchars=256
-    endif
-else
-numchars=1
+    if(nchars>0)nflag='-n '//f_int_to_char(nchars)
 endif
-allocate(character(numchars) :: buffer)
-if(present(timeout))then
-    timeout_secs=timeout
-else
-    timeout_secs=-1
-endif
-if(timeout_secs>=0)then
-    call f_popen('bash -c "read -sn '//f_int_to_char(numchars)// &
-                 ' -t '//f_int_to_char(timeout_secs)//' && echo \$REPLY"',pipe)
-else
-    call f_popen('bash -c "read -sn '//f_int_to_char(numchars)// &
-                 ' && echo \$REPLY"',pipe)
-endif
-read(pipe,'(A)',iostat=istat)buffer
-if(istat/=0)buffer=''
-call f_pclose(pipe)
-allocate(character(len_trim(buffer)) :: f_getch)
-f_getch=trim(buffer)
 if(present(echo))then
-    if(echo)then
-        call f_bold(trim(buffer))
-        return
-    endif
+    if(echo)sflag=''
 endif
+if(present(timeout))then
+    if(timeout>=0)tflag='-t '//f_int_to_char(timeout)
+endif
+print*,nflag,sflag,tflag
+write(cmd,'(4(A,1X),A)')'bash -c "read',nflag,sflag,tflag,'&& echo \$REPLY"'
+call f_popen(cmd,pipe)
+read(pipe,'(A)',iostat=istat)f_getch
+if(istat/=0)f_getch=''
+call f_pclose(pipe)
 end function f_getch
 
 subroutine f_getyesno(assertive)
