@@ -37,8 +37,9 @@
 !************************************************************************
 
 ! WARNING:
-! This module may not work on shells other than bash. Also some terminals that do
-! not support tput will not be compatible.
+! Below we use the bash built-in command, read. Hence, the specific use of bash.
+! Note that execute_command_line invokes sh, not bash.
+! Also some terminals that do not support tput may cause trouble.
 !************************************************************************
 
 ! REFERENCE:
@@ -57,8 +58,8 @@ private
 integer, parameter :: red=1, green=2, yellow=3, blue=4, magenta=5, cyan=6
 
 !~~~~~~~~~~~~~~~~~~~~~~~~~BEGIN CONTENTS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!Press any key
-public :: f_keypress, f_getyesno
+!Keyboard input without pressing Enter key
+public :: f_keypress, f_getch, f_getyesno
 
 !Display style
 public :: f_bold, f_outstanding, f_underline, f_italic, f_blink
@@ -81,6 +82,45 @@ contains
 subroutine f_keypress()
 call execute_command_line('bash -c "read -sn 1"')
 end subroutine f_keypress
+
+function f_getch(nchars,echo,timeout)
+integer, intent(in), optional :: nchars, timeout
+logical, intent(in), optional :: echo
+character(:), allocatable :: f_getch, buffer
+integer :: numchars, pipe, timeout_secs
+
+if(present(nchars))then
+    if(nchars>0)then
+        numchars=nchars
+    else
+        numchars=256
+    endif
+else
+numchars=1
+endif
+allocate(character(numchars) :: buffer)
+if(present(timeout))then
+    timeout_secs=timeout
+else
+    timeout_secs=-1
+endif
+if(timeout_secs>=0)then
+    call f_popen('bash -c "read -sn 1 -t '//f_int_to_char(timeout_secs)// &
+                                                  ' && echo \$REPLY"',pipe)
+else
+    call f_popen('bash -c "read -sn 1 && echo \$REPLY"',pipe)
+endif
+read(pipe,'(A)')buffer
+call f_pclose(pipe)
+allocate(character(len_trim(buffer)) :: f_getch)
+f_getch=trim(buffer)
+if(present(echo))then
+    if(echo)then
+        call f_bold(trim(buffer))
+        return
+    endif
+endif
+end function f_getch
 
 subroutine f_getyesno(assertive)
 logical, intent(out) :: assertive

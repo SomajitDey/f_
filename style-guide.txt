@@ -48,6 +48,6 @@ Comma, :: , Operators(+/=/.AND./.NOT./> etc.), => :
 
 Other Advisories:
 
-Use dowhile, elseif instead of do while and else if.
+Use do while, else if instead of dowhile and elseif.
 
 Do not put space between a procedure name and the following brackets.
