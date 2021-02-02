@@ -83,34 +83,34 @@ subroutine f_keypress()
 call execute_command_line('bash -c "read -sn 1"')
 end subroutine f_keypress
 
-!If echo and timeout are both present below and echo is .true.,
-!the users won't see what they typed until they complete the input, 
-!or they press Enter(for nchar=-1). If time expires before input
-!completion, it would be considered a null input.
-!When using for password (with or w/o timeout), echo=.false. is recommended.
 function f_getch(nchars,echo,timeout)
 integer, intent(in), optional :: nchars, timeout
 logical, intent(in), optional :: echo
 character(:), allocatable :: f_getch, cmd, nflag, sflag, tflag
 integer :: pipe, istat
+character(len=500) :: buffer
 !Setting defaults first:
-nflag='-n 1'
-sflag='-s'
+nflag=' -n 1'
+sflag=' -s'
 tflag=''
 if(present(nchars))then
-    if(nchars>0)nflag='-n '//f_int_to_char(nchars)
+    if(nchars>0)then
+        nflag=' -n '//f_int_to_char(nchars)
+    else
+        nflag=''
+    endif
 endif
 if(present(echo))then
     if(echo)sflag=''
 endif
 if(present(timeout))then
-    if(timeout>=0)tflag='-t '//f_int_to_char(timeout)
+    if(timeout>=0)tflag=' -t '//f_int_to_char(timeout)
 endif
-print*,nflag,sflag,tflag
-write(cmd,'(4(A,1X),A)')'bash -c "read',nflag,sflag,tflag,'&& echo \$REPLY"'
+cmd='bash -c "read'//nflag//sflag//tflag//'&& echo \$REPLY"'
 call f_popen(cmd,pipe)
-read(pipe,'(A)',iostat=istat)f_getch
-if(istat/=0)f_getch=''
+read(pipe,'(A)',iostat=istat)buffer
+if(istat/=0)buffer=''
+f_getch=trim(adjustl(buffer))
 call f_pclose(pipe)
 end function f_getch
 

@@ -10,7 +10,7 @@ call f_blue('You typed: '//f_getch(3, .true.))
 call f_cyan('Great! Now press any key: ', noadvance=.false.)
 call f_blue('You typed: '//f_getch())
 call f_magenta('Awesome! Now enter your name wihin 10s: ')
-call f_blue('Did you enjoy '//f_getch(-5, .false., 10)//'?')
+call f_blue('Did you enjoy '//f_getch(-5, .true., 10)//'?')
 call f_getyesno(nod)
 if(nod)then
     call f_yellow('Thank you!')
