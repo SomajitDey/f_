@@ -455,12 +455,10 @@ end function f_time
 subroutine f_popen(command,pipe)
 character(len=*), intent(in) :: command
 integer, intent(out) :: pipe
-integer :: len_pipename, pid, now
+integer :: pid, now
 character(len=:), allocatable :: pipename
 pid=f_getpid()
 now=f_time()
-len_pipename=len_trim('.'//f_int_to_char(pid)//'_'//f_int_to_char(now))
-allocate(character(len_pipename) :: pipename)
 pipename='.'//f_int_to_char(pid)//'_'//f_int_to_char(now)
 call execute_command_line(trim(adjustl(command))//' > '//pipename)
 open(newunit=pipe, file=pipename, form='formatted', access='sequential', action='read')

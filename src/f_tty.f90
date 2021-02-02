@@ -294,13 +294,16 @@ end function f_termwidth
 
 subroutine f_clrscr(nlines)
 integer, intent(in), optional :: nlines
-character(len=4) :: nrows
+integer :: icount
 if(present(nlines))then
-    write(nrows,'(I0)')nlines
     if(nlines<0)then
-        call execute_command_line('tput reset')
+        do icount=1,-nlines
+            call execute_command_line('tput cud1 && tput el')
+        enddo
+    elseif(nlines==0)then
+        call execute_command_line('tput el && tput el1')
     else
-        call execute_command_line('tput cuu '//trim(nrows)//' && tput ed')
+        call execute_command_line('tput cuu '//f_int_to_char(nlines)//' && tput ed')
     endif
 else
     call execute_command_line('tput clear')
