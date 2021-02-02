@@ -110,167 +110,145 @@ end subroutine f_getyesno
 subroutine f_bold(string, noadvance)
 character(len=*), intent(in) :: string
 logical, intent(in), optional :: noadvance
-character(len=len_trim(adjustl(string))) :: showme
-showme=trim(adjustl(string))
 if(present(noadvance))then
     if(noadvance)then
-        call execute_command_line('tput bold && echo -n '//showme//' && tput sgr0')
+        call execute_command_line('tput bold && echo -n '//string//' && tput sgr0')
         return
     endif
 endif
-call execute_command_line('tput bold && echo '//showme//' && tput sgr0')
+call execute_command_line('tput bold && echo '//string//' && tput sgr0')
 end subroutine f_bold
 
 subroutine f_outstanding(string, noadvance)
 character(len=*), intent(in) :: string
 logical, intent(in), optional :: noadvance
-character(len=len_trim(adjustl(string))) :: showme
-showme=trim(adjustl(string))
 if(present(noadvance))then
     if(noadvance)then
-        call execute_command_line('tput smso && echo -n '//showme//' && tput rmso')
+        call execute_command_line('tput smso && echo -n '//string//' && tput rmso')
         return
     endif
 endif
-call execute_command_line('tput smso && echo '//showme//' && tput rmso')
+call execute_command_line('tput smso && echo '//string//' && tput rmso')
 end subroutine f_outstanding
 
 subroutine f_underline(string, noadvance)
 character(len=*), intent(in) :: string
 logical, intent(in), optional :: noadvance
-character(len=len_trim(adjustl(string))) :: showme
-showme=trim(adjustl(string))
 if(present(noadvance))then
     if(noadvance)then
-        call execute_command_line('tput smul && echo -n '//showme//' && tput rmul')
+        call execute_command_line('tput smul && echo -n '//string//' && tput rmul')
         return
     endif
 endif
-call execute_command_line('tput smul && echo '//showme//' && tput rmul')
+call execute_command_line('tput smul && echo '//string//' && tput rmul')
 end subroutine f_underline
 
 subroutine f_italic(string, noadvance)
 character(len=*), intent(in) :: string
 logical, intent(in), optional :: noadvance
-character(len=len_trim(adjustl(string))) :: showme
-showme=trim(adjustl(string))
 if(present(noadvance))then
     if(noadvance)then
-        call execute_command_line('tput sitm && echo -n '//showme//' && tput ritm')
+        call execute_command_line('tput sitm && echo -n '//string//' && tput ritm')
         return
     endif
 endif
-call execute_command_line('tput sitm && echo '//showme//' && tput ritm')
+call execute_command_line('tput sitm && echo '//string//' && tput ritm')
 end subroutine f_italic
 
 subroutine f_blink(string, noadvance)
 character(len=*), intent(in) :: string
 logical, intent(in), optional :: noadvance
-character(len=len_trim(adjustl(string))) :: showme
-showme=trim(adjustl(string))
 if(present(noadvance))then
     if(noadvance)then
-        call execute_command_line('tput blink && echo -n '//showme//' && tput sgr0')
+        call execute_command_line('tput blink && echo -n '//string//' && tput sgr0')
         return
     endif
 endif
-call execute_command_line('tput blink && echo '//showme//' && tput sgr0')
+call execute_command_line('tput blink && echo '//string//' && tput sgr0')
 end subroutine f_blink
 
 subroutine f_red(string, noadvance)
 character(len=*), intent(in) :: string
 logical, intent(in), optional :: noadvance
-character(len=len_trim(adjustl(string))) :: showme
-showme=trim(adjustl(string))
 if(present(noadvance))then
     if(noadvance)then
         call execute_command_line('tput setaf '//f_int_to_char(red)// &
-                               ' && echo -n '//showme//' && tput sgr0')
+                               ' && echo -n '//string//' && tput sgr0')
         return
     endif
 endif
 call execute_command_line('tput setaf '//f_int_to_char(red)// &
-                                  ' && echo '//showme//' && tput sgr0')
+                                  ' && echo '//string//' && tput sgr0')
 end subroutine f_red
 
 subroutine f_green(string, noadvance)
 character(len=*), intent(in) :: string
 logical, intent(in), optional :: noadvance
-character(len=len_trim(adjustl(string))) :: showme
-showme=trim(adjustl(string))
 if(present(noadvance))then
     if(noadvance)then
         call execute_command_line('tput setaf '//f_int_to_char(green)// &
-                               ' && echo -n '//showme//' && tput sgr0')
+                               ' && echo -n '//string//' && tput sgr0')
         return
     endif
 endif
 call execute_command_line('tput setaf '//f_int_to_char(green)// &
-                                  ' && echo '//showme//' && tput sgr0')
+                                  ' && echo '//string//' && tput sgr0')
 end subroutine f_green
 
 subroutine f_yellow(string, noadvance)
 character(len=*), intent(in) :: string
 logical, intent(in), optional :: noadvance
-character(len=len_trim(adjustl(string))) :: showme
-showme=trim(adjustl(string))
 if(present(noadvance))then
     if(noadvance)then
         call execute_command_line('tput setaf '//f_int_to_char(yellow)// &
-                               ' && echo -n '//showme//' && tput sgr0')
+                               ' && echo -n '//string//' && tput sgr0')
         return
     endif
 endif
 call execute_command_line('tput setaf '//f_int_to_char(yellow)// &
-                                  ' && echo '//showme//' && tput sgr0')
+                                  ' && echo '//string//' && tput sgr0')
 end subroutine f_yellow
 
 subroutine f_blue(string, noadvance)
 character(len=*), intent(in) :: string
 logical, intent(in), optional :: noadvance
-character(len=len_trim(adjustl(string))) :: showme
-showme=trim(adjustl(string))
 if(present(noadvance))then
     if(noadvance)then
         call execute_command_line('tput setaf '//f_int_to_char(blue)// &
-                               ' && echo -n '//showme//' && tput sgr0')
+                               ' && echo -n '//string//' && tput sgr0')
         return
     endif
 endif
 call execute_command_line('tput setaf '//f_int_to_char(blue)// &
-                                  ' && echo '//showme//' && tput sgr0')
+                                  ' && echo '//string//' && tput sgr0')
 end subroutine f_blue
 
 subroutine f_magenta(string, noadvance)
 character(len=*), intent(in) :: string
 logical, intent(in), optional :: noadvance
-character(len=len_trim(adjustl(string))) :: showme
-showme=trim(adjustl(string))
 if(present(noadvance))then
     if(noadvance)then
         call execute_command_line('tput setaf '//f_int_to_char(magenta)// &
-                               ' && echo -n '//showme//' && tput sgr0')
+                               ' && echo -n '//string//' && tput sgr0')
         return
     endif
 endif
 call execute_command_line('tput setaf '//f_int_to_char(magenta)// &
-                                  ' && echo '//showme//' && tput sgr0')
+                                  ' && echo '//string//' && tput sgr0')
 end subroutine f_magenta
 
 subroutine f_cyan(string, noadvance)
 character(len=*), intent(in) :: string
 logical, intent(in), optional :: noadvance
-character(len=len_trim(adjustl(string))) :: showme
-showme=trim(adjustl(string))
 if(present(noadvance))then
     if(noadvance)then
         call execute_command_line('tput setaf '//f_int_to_char(cyan)// &
-                               ' && echo -n '//showme//' && tput sgr0')
+                               ' && echo -n '//string//' && tput sgr0')
         return
     endif
 endif
 call execute_command_line('tput setaf '//f_int_to_char(cyan)// &
-                                  ' && echo '//showme//' && tput sgr0')
+                                  ' && echo '//string//' && tput sgr0')
 end subroutine f_cyan
 
 integer function f_termheight()
