@@ -120,7 +120,7 @@ end interface
 if(present(handler_routine))then
     handler_ptr_array(signum)%ptr => handler_routine
 else
-    handler_ptr_array(signum)%ptr => null(handler_ptr_array(signum)%ptr)
+    handler_ptr_array(signum)%ptr => null()
 endif
 c_handler=c_funloc(f_handler)
 iret=c_signal(signum, c_handler)
